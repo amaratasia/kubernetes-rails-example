@@ -1,7 +1,6 @@
-
 class PagesController < ApplicationController
-    def home
-      100.times {HardWorker.perform_async}
-    end
+  def home
+    HardWorker.perform_async
+    LongWorker.set(queue: "long#{((rand(200)+1) % 2)}").perform_async
   end
-  
+end

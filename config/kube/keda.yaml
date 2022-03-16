@@ -8,7 +8,6 @@ spec:
     name: redis-secret
     key: REDIS_PASSWORD
 ---
-
 apiVersion: keda.sh/v1alpha1  
 kind: ScaledObject
 metadata:        
@@ -25,6 +24,26 @@ spec:
     metadata:
       address: host.docker.internal:6379
       listName: queue:default
-      listLength: "1"
+      listLength: "10"
+    authenticationRef:
+      name: redis-auth
+---
+apiVersion: keda.sh/v1alpha1  
+kind: ScaledObject
+metadata:        
+  name: sidekiq
+spec:
+  scaleTargetRef:
+    name: sidekiqnew
+  pollingInterval: 1
+  cooldownPeriod:  1
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: redis
+    metadata:
+      address: host.docker.internal:6379
+      listName: queue:queue_name_2
+      listLength: "2"
     authenticationRef:
       name: redis-auth

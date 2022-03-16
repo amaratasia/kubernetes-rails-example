@@ -1,29 +1,76 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sidekiq
+  name: sidekiqnew
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sidekiq
+      app: sidekiqnew
   template:
     metadata:
       labels:
-        app: sidekiq
+        app: sidekiqnew
+    spec:
+      containers:
+      - name: sidekiqnew
+        image: multiqueuenows
+        command: ["sidekiq"]        
+        args:          
+          - "-q"          
+          - "queue_name_2"         
+        imagePullPolicy: Never
+        env:
+        - name: REDIS_URL
+          value: redis://redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidekiq0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidekiq0
+  template:
+    metadata:
+      labels:
+        app: sidekiq0
     spec:
       containers:
       - name: sidekiq
-        image: amaratasia/kubernetes-rails-example:latest
-        lifecycle:
-          preStop:
-            exec:
-              command: 
-                - "sidekiqctl" 
-                - "stop"
-                - "/tmp/sidekiq.pid"
-                - "120"
-        command: ["sidekiq"]
+        image: multiqueuenows
+        command: ["sidekiq"]        
+        args:          
+          - "-q"          
+          - "long0"
+        imagePullPolicy: Never
+        env:
+        - name: REDIS_URL
+          value: redis://redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidekiq1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidekiq1
+  template:
+    metadata:
+      labels:
+        app: sidekiq1
+    spec:
+      containers:
+      - name: sidekiq
+        image: multiqueuenows
+        command: ["sidekiq"]        
+        args:          
+          - "-q"          
+          - "long1"       
         imagePullPolicy: Never
         env:
         - name: REDIS_URL
